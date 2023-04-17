@@ -1,0 +1,44 @@
+# textdomain: beamer
+
+
+### chatcommands.lua ###
+
+Locks or unlocks beaming.=Sperrt oder entsperrt beamen.
+Tells you the servername.=Sagt dir den Servernamen.
+Usage: servername | toggle=Parameter: servername | toggle
+
+### init.lua ###
+
+Beamer=Beamer
+Beaming finished.=Beamen fertig.
+Beaming to=Beamen zu
+Exit=Beenden
+Node=Objekt
+Number=Anzahl
+Playername=Spielername
+Send=Senden
+Servername=Servername
+Unknown Object=Unbekanntes Object
+You can not beam something to yourself!=Du kannst dir nichts selbst beamen!
+You need a Node or Item to beam! Empty Nodename.=Du brauchst einen Block oder Gegenstand zum beamen! Leerer Objektname.
+You need a Playername to beam!=Du brauchst einen Spielernamen zum beamen!
+local=lokal
+
+### lib.lua ###
+
+Beamen is locked.=Beamen ist gesperrt.
+Beamen is possible again.=Beamen wieder möglich.
+Beaming of=Beamen von
+Inventory=Inventar
+No room for so much items in=Kein Platz so viele Objekte in
+Not enough items in your Inventory!=Nicht genug Objekte in deinem Inventar!
+Only local beam possible.=Nur lokales beamen möglich.
+Player=Spieler
+The Servername is: =Der Servername ist: 
+There is no servername set.=Kein Servername gesetzt.
+has beamed=beamte
+has turned beaming off.=hat beamen gesperrt.
+in your Inventory=in dein Inventar
+not found or not online.=nicht gefunden oder nicht online.
+to=zu
+with success=erfolgreich

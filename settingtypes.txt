@@ -1,0 +1,2 @@
+# Servername
+beamer.Servername (Name of the Server) string localhost
