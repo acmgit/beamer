@@ -67,6 +67,14 @@ minetest.register_node("beamer:beamer", {
                     end
 })
 
+minetest.register_craft({
+	output = "beamer:beamer",
+	recipe = {	{"dye:blue", "default:obsidian_glass", "dye:red"},
+				{"default:diamondblock", "default:mese", "default:diamondblock"},
+                {"bucket:bucket_water", "default:furnace", "bucket:bucket_lava"}
+			},
+})
+
 function b.lib.show_formspec(player)
         local playername = player:get_player_name()
         minetest.show_formspec(playername, "beamer:inputform",
