@@ -2,7 +2,7 @@ local b = beamer
 local S = beamer.S
 
 minetest.register_chatcommand("beamer", {
-	params = "servername | toggle",
+	params = "servername | toggle | what_is",
 	description = "servername " .. S("Tells you the servername.") .. "\n" ..
                   "toggle " .. S("Locks or unlocks beaming."),
 
@@ -20,3 +20,13 @@ minetest.register_chatcommand("beamer", {
 
 	end,
 }) -- chatcommand "servername"
+
+minetest.register_chatcommand("tricorder", {
+    params = "",
+    description = S("Scans the object in your hand."),
+    func = function(player)
+        b.lib.show_item(player)
+
+    end
+
+}) -- chatcommand "tricorder"

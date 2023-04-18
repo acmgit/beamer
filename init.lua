@@ -25,7 +25,7 @@ b.light_blue = minetest.get_color_escape_sequence('#8888FF')
 b.light_green = minetest.get_color_escape_sequence('#88FF88')
 b.light_red = minetest.get_color_escape_sequence('#FF8888')
 
-b.version = "1.0"
+b.version = "1.1"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
@@ -90,28 +90,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
         if fields.button_send then
 
-            if(playername == "") then
-                minetest.chat_send_player(username, b.red .. S("You need a Playername to beam!"))
-                return
-            end
-
-            if(username == playername) then
-                minetest.chat_send_player(username, b.red .. S("You can not beam something to yourself!"))
-                return
-            end
-
-            if(node == "") then
-                minetest.chat_send_player(username, b.red .. S("You need a Node or Item to beam! Empty Nodename."))
-                return
-            end
-
-            if (not minetest.registered_items[node]) then
-                minetest.chat_send_player(username, b.red .. S("Unknown Object") .. " " .. b.orange .. node .. b.red .. "!")
-                return
-
-            end
-
-            --minetest.close_formspec(username, "beamer:inputform")
             b.to = {    user = username,
                         server = servername,
                         player = playername,
@@ -119,14 +97,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                         value = amount,
                 }
 
-            --minetest.chat_send_player(b.to["user"], b.green .. S("Beaming to") .. " " .. b.orange .. b.to["player"] .. b.green .. " ...")
             b.lib.beam_local()
 
         end -- if fields.button_send
 
 
         if fields.button_exit then
-            minetest.chat_send_player(username, b.orange .. S("Beaming finished."))
+            minetest.chat_send_player(username, b.green .. S("Beaming finished."))
             b.beam_far = false
 
         end -- if fields.button_exit
