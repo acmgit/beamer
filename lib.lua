@@ -204,15 +204,16 @@ end
 function b.lib.punch_beamer(pos, node, puncher, pointed_thing)
     if (not puncher) then return end
 
-    local player_name = minetest.get_player_name(puncher)
-    local item = player_name:get_wielded_item()
+    local player_name = puncher:get_player_name()
+    local item_stack = puncher:get_wielded_item()
+    local item_name = item_stack:get_name()
 
-    if(not item) then
+    if(not item_name) then
         beamer.lib.show_formspec(puncher)
         return
 
     else -- if(not item)
-        local item_name = item:get_name()
+
         if (string.match(item_name, "pick") or (string.match(item_name, "axe"))) then
             minetest.node_dig(pos, node, puncher)
 
