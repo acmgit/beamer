@@ -25,7 +25,7 @@ b.light_blue = minetest.get_color_escape_sequence('#8888FF')
 b.light_green = minetest.get_color_escape_sequence('#88FF88')
 b.light_red = minetest.get_color_escape_sequence('#FF8888')
 
-b.version = "1.1"
+b.version = "1.2"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
