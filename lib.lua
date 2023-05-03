@@ -12,14 +12,14 @@ function b.lib.beam_local()
 
     end -- if(not user_object)
 
-
-
-    if not b.lib.check_all(username) then return end
-
     local user_inventory = b.lib.get_object_inventory(b.to["user"])
     local player_inventory = b.lib.get_object_inventory(b.to["player"])
     local item_in_inventory = b.to["object"] .. " " .. b.to["value"]
     local playername = b.to["player"]
+
+    if not b.lib.check_all(username, item_in_inventory) then return end
+
+
 
     minetest.sound_play("beamer_sound", { to_player = username, loop = false,})
     user_inventory:remove_item("main", item_in_inventory)
@@ -118,9 +118,10 @@ end
 
 function b.lib.check_object_exist(username)
     local node = b.to["object"]
-    print(node)
     if (not minetest.registered_items[node]) then
-        minetest.chat_send_player(username, b.red .. S("Unknown Object") .. " " .. b.orange .. node .. b.red .. "!")
+        minetest.chat_send_player(username, b.red .. S("Unknown Object") .. " " ..
+                                            b.orange .. node ..
+                                            b.red .. "!")
         return false
 
     end
@@ -147,7 +148,9 @@ function b.lib.check_player_is_online(username)
     local player_object = b.lib.get_object(b.to["player"])
 
     if(not player_object) then
-        minetest.chat_send_player(username, b.red .. S("Player") .. " " .. b.orange .. b.to["player"] .. b.red .. " " .. S("not found or not online."))
+        minetest.chat_send_player(username, b.red .. S("Player") .. " " ..
+                                            b.orange .. b.to["player"] ..
+                                            b.red .. " " .. S("not found or not online."))
         return false
 
     end
@@ -158,6 +161,7 @@ end
 
 function b.lib.check_player_inventory_is_full(username)
     local player_inventory = b.lib.get_object_inventory(b.to["player"])
+    local item_in_inventory = b.to["object"] .. " " .. b.to["value"]
 
     if(not player_inventory:room_for_item("main", item_in_inventory)) then
         minetest.chat_send_player(username, b.red .. S("No room for so much items in") .. " " ..
@@ -175,7 +179,9 @@ function b.lib.check_player_ignores_beaming(username)
     local player = b.to["player"]
 
     if(b.ignore[player]) then
-        minetest.chat_send_player(username, b.red .. S("Player") .. " " .. b.orange .. player .. b.red .. " " .. S("has turned beaming off."))
+        minetest.chat_send_player(username, b.red .. S("Player") .. " " ..
+                                            b.orange .. player ..
+                                            b.red .. " " .. S("has turned beaming off."))
         return false
 
     end
@@ -194,6 +200,31 @@ function b.lib.get_object_inventory(name)
     return object:get_inventory()
 
 end
+
+function b.lib.punch_beamer(pos, node, puncher, pointed_thing)
+    if (not puncher) then return end
+
+    local player_name = minetest.get_player_name(puncher)
+    local item = player_name:get_wielded_item()
+
+    if(not item) then
+        beamer.lib.show_formspec(puncher)
+        return
+
+    else -- if(not item)
+        local item_name = item:get_name()
+        if (string.match(item_name, "pick") or (string.match(item_name, "axe"))) then
+            minetest.node_dig(pos, node, puncher)
+
+        else
+            beamer.lib.show_formspec(puncher)
+
+        end
+
+    end -- if( not item)
+
+end -- function punch_beamer
+
 
 -- Shows Information about an Item you held in the Hand
 function b.lib.show_item(name)
@@ -224,3 +255,16 @@ function b.lib.show_item(name)
 	end -- if( player
 
 end -- chathelp.show_item()-- Shows Information about an Item you held in the Hand
+
+function b.lib.show_formspec(player)
+        local playername = player:get_player_name()
+        minetest.show_formspec(playername, "beamer:inputform",
+                        "size[8.17,1.42]" ..
+                        "field[0.16,0.48;2.36,0.87;servername;" .. S("Servername") .. ";" .. b.servername ..  "]" ..
+                        "field[2.4,0.48;2.6,0.87;playername;" .. S("Playername") .. ";]" ..
+                        "field[4.88,0.48;2.6,0.87;node;" .. S("Node") .. ";default:cobble]" ..
+                        "field[7.36,0.48;1.24,0.87;amount;" .. S("Number") .. ";1]" ..
+                        "image_button[-0.14,0.98;2.37,0.83;blank.png;button_send;" .. S("Send") .. "]" ..
+                        "image_button_exit[5.7,0.98;2.61,0.83;blank.png;button_exit;" .. S("Exit") .. "]"
+                    )
+end

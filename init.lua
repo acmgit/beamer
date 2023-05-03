@@ -62,9 +62,9 @@ minetest.register_node("beamer:beamer", {
         groups = { cracky = 1, },
         is_ground_content = false,
         on_punch = function(pos, node, puncher, pointed_thing)
-                        beamer.lib.show_formspec(puncher)
+                        b.lib.punch_beamer(pos, node, puncher, pointed_thing)
 
-                    end
+                    end,
 })
 
 minetest.register_craft({
@@ -74,19 +74,6 @@ minetest.register_craft({
                 {"bucket:bucket_water", "default:furnace", "bucket:bucket_lava"}
 			},
 })
-
-function b.lib.show_formspec(player)
-        local playername = player:get_player_name()
-        minetest.show_formspec(playername, "beamer:inputform",
-                                "size[8.17,1.42]" ..
-                                "field[0.16,0.48;2.36,0.87;servername;" .. S("Servername") .. ";" .. b.servername ..  "]" ..
-                                "field[2.4,0.48;2.6,0.87;playername;" .. S("Playername") .. ";]" ..
-                                "field[4.88,0.48;2.6,0.87;node;" .. S("Node") .. ";default:cobble]" ..
-                                "field[7.36,0.48;1.24,0.87;amount;" .. S("Number") .. ";1]" ..
-                                "image_button[-0.14,0.98;2.37,0.83;blank.png;button_send;" .. S("Send") .. "]" ..
-                                "image_button_exit[5.7,0.98;2.61,0.83;blank.png;button_exit;" .. S("Exit") .. "]"
-                            )
-end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname == "beamer:inputform" and player then
