@@ -42,7 +42,7 @@ end
 local S = b.S
 
 b.servername = minetest.settings:get("beamer.servername") or "Local"
-b.irc = minetest.settings:getbool("beamer.irc_online") or false
+b.irc = minetest.settings:get_bool("beamer.irc_online") or false
 b.irc_name = minetest.settings:get("beamer.irc_server_ip") or "libera.chat"
 b.irc_channelname = minetest.settings:get("beamer.irc_channelname") or "##MT_Data"
 
