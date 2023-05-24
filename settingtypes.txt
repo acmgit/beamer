@@ -1,2 +1,8 @@
+# IRC for sending to other server is
+beamer.irc (Local or Global) bool false
+
 # Servername
-beamer.Servername (Name of the Server) string localhost
+beamer.servername (Name of the Server) string Local
+
+#Serversteop
+beamer.serverstep (Check every x Seconds) float 2

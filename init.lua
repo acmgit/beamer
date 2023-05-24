@@ -29,8 +29,6 @@ b.version = "1.2"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
-b.list = {}
-b.to = {}
 b.ignore = {}
 
 if(minetest.get_translator ~= nil) then
@@ -42,10 +40,41 @@ else
 end
 
 local S = b.S
-b.servername = S("local")
+
+b.servername = minetest.settings:get("beamer.servername") or "Local"
+b.irc = minetest.settings:getbool("beamer.irc_online") or false
+b.irc_name = minetest.settings:get("beamer.irc_server_ip") or "libera.chat"
+b.irc_channelname = minetest.settings:get("beamer.irc_channelname") or "##MT_Data"
+
+b.error.irc_off = 1
+b.error.player_unknown              = b.error.irc_off + 1
+b.error.player_inventory_is_full    = b.error.irc_off + 2
+b.error.locked_beam                 = b.error.irc_off + 3
+b.error.unkown_item                 = b.error.irc_off + 4
+
+b.error.string = {
+                    [b.error.irc_off]                       = b.red .. S("Far serverbeaming is offline."),
+                    [b.error.player_unkown]                 = b.red .. S("Unkown Player."),
+                    [b.error.player_inventory_is_full]      = b.red .. S("Inventory is full."),
+                    [b.error.locked_beam]                   = b.red .. S("Locked beaming."),
+                    [b.error.unkown_item]                   = b.red .. S("Unknown Item."),
+                }
+
+b.package = {
+                ["server_from"] = "",
+                ["server_to"] = "",
+                ["sender"] = "",
+                ["receiver"] = "",
+                ["items"] = "",
+}
+
+-- ***************************************** Includes ************************************
 
 dofile(b.path .. "/lib.lua")
 dofile(b.path .. "/chatcommands.lua")
+
+
+-- ***************************************** Main ****************************************
 
 minetest.register_node("beamer:beamer", {
         description = S("Beamer"),
@@ -78,21 +107,21 @@ minetest.register_craft({
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname == "beamer:inputform" and player then
         local username = player:get_player_name()
-        local servername = fields.servername or ""
+        local servername = fields.servername or "local"
         local playername = fields.playername or ""
         local node = fields.node or ""
         local amount = fields.amount or 0
 
         if fields.button_send then
 
-            b.to = {    user = username,
-                        server = servername,
-                        player = playername,
-                        object = node,
-                        value = amount,
-                }
+            local pkg = {   ["server_from"] = b.servername,
+                            ["server_to"] = servername,
+                            ["sender"] = username,
+                            ["receiver"] = playername,
+                            ["items"] = node .. " " .. amount,
+                        }
 
-            b.lib.beam_local()
+            b.lib.check_package(pkg, true)
 
         end -- if fields.button_send
 
@@ -106,3 +135,5 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end -- if formname
 
 end)
+
+minetest.log("action", b.modname .. " V " .. b.version .. " successfully loaded.")
