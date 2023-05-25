@@ -3,10 +3,10 @@ local S = b.S
 b.lib = {}
 
 function b.lib.send(package)
-    if(package["server_to"] == "") then package["server_to"] = b.servername end
+    if(package["server_to"] == "") then package["server_to"] = b.server_name end
 
     local server_from = package["server_from"]
-    local server_to = package["server_to"] or b.servername
+    local server_to = package["server_to"] or b.server_name
     local sender = package["sender"]
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
@@ -40,7 +40,6 @@ function b.lib.send(package)
 
     if(not string.match(server_from, server_to)) then
         -- send global
-        print("send_irc")
         if(not b.irc) then
             minetest.chat_send_player(package["sender"], b.red .. S("Far serverbeaming is offline."))
             return
@@ -53,7 +52,6 @@ function b.lib.send(package)
 
     else
         -- send local
-        local sender_inventory = b.lib.get_inventory(package["sender"])
         b.lib.send_item(package["sender"], package["items"])                -- removes the items from the inventory
         b.lib.write_send(package)
         b.lib.receive(package)
@@ -64,12 +62,13 @@ function b.lib.send(package)
 end -- send(package)
 
 function b.lib.send_irc(package)
-    b.lib.receive_item(package["sender"], package["items"])
+    local message = minetest.serialize(package)
+    message = "PRIVMSG "   .. b.irc_channel_name .. " :" .. message .. b.crlf
+    b.client:send(message)
 
 end
 
 function b.lib.handle_error(package)
-    print("Handle Error")
     local dummy
 
     dummy = package["server_from"]
@@ -80,45 +79,43 @@ function b.lib.handle_error(package)
     package["sender"] = package["receiver"]
     package["receiver"] = dummy
 
-    local server_from = package["server_from"]
+    --local server_from = package["server_from"]
     local server_to = package["server_to"]
     local receiver = package["receiver"]
-    local sender = package["sender"]
+    --local sender = package["sender"]
 
-    if (string.match(server_to, b.servername)) then                                          -- sending local
-        print("Send local")
+    if (string.match(server_to, b.server_name)) then                                          -- sending local
         if(minetest.get_player_by_name(receiver)) then                                       -- receiver is online?
             minetest.chat_send_player(receiver, b.error.string[package["error"]])
             b.lib.write_receive(package)
             b.lib.receive_item(receiver, package["items"])
 
-        end                                                                                 -- unlucky one, sender is offline
+        end                                                                                 -- unlucky one,
+                                                                                            -- sender is offline
 
     else                                                                                    -- sending global
-        print("Send global")
-        send_irc(package)
+        b.lib.send_irc(package)
 
     end
 
 end -- b.lib.handle_error
 
 function b.lib.receive(package)
-    if (not string.match(package["server_to"],b.servername)) then return end       -- it's not our server, ignore it
+    if (not string.match(package["server_to"],b.server_name)) then return end       -- it's not our server, ignore it
 
     if (package["error"]) then                                                     -- has an error, errorhandling
         b.lib.handle_error(package)
     end
 
-    local server_from = package["server_from"]
-    local sender = package["sender"]
+    --local server_from = package["server_from"]
+    --local sender = package["sender"]
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
-    local amount = tonumber(string.match(package["items"], "[%d]+"))
+    --local amount = tonumber(string.match(package["items"], "[%d]+"))
     local receiver_object = minetest.get_player_by_name(receiver)
 
     -- Player is not online
     if(not receiver_object) then
-        print("Player is not online.")
         package["error"] = b.error.player_unknown
         b.lib.handle_error(package)
         return
@@ -127,7 +124,6 @@ function b.lib.receive(package)
 
     -- Player ignores beaming
     if(b.ignore[receiver]) then
-        print("Player ignores.")
         package["error"] = b.error.locked_beam
         b.lib.handle_error(package)
         return
@@ -136,7 +132,6 @@ function b.lib.receive(package)
 
     -- Unkown Object
     if(not b.lib.check_item_exist(item)) then
-        print("Unkown received Item.")
         package["error"] = b.error.unkown_object
         b.lib.handle_error(package)
         return
@@ -202,7 +197,7 @@ function b.lib.get_servername(player)
 
         if (beamer.servername ~= "") then
             minetest.chat_send_player(player, b.green .. S("The Servername is: ") ..
-                                              b.orange .. beamer.servername .. "!")
+                                              b.orange .. b.server_name .. "!")
 
         else
             minetest.chat_send_player(player, b.red .. S("There is no servername set.") .. "\n" ..
@@ -290,14 +285,11 @@ end
 
 function b.lib.check_player_inventory_is_full(receiver, items)
     local player_object = minetest.get_player_by_name(receiver)
-
-    print(player_object)
     if (not player_object) then return false end
 
     local player_inventory = player_object:get_inventory()
-    print(player_inventory)
-
     if(not player_inventory) then return false end
+
     if(not player_inventory:room_for_item("main", items)) then
         return false
 

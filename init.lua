@@ -25,7 +25,7 @@ b.light_blue = minetest.get_color_escape_sequence('#8888FF')
 b.light_green = minetest.get_color_escape_sequence('#88FF88')
 b.light_red = minetest.get_color_escape_sequence('#FF8888')
 
-b.version = "1.2"
+b.version = "1.3"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
@@ -41,10 +41,11 @@ end
 
 local S = b.S
 
-b.servername = minetest.settings:get("beamer.servername") or "Local"
-b.irc = minetest.settings:get_bool("beamer.irc_online") or false
-b.irc_name = minetest.settings:get("beamer.irc_server_ip") or "libera.chat"
-b.irc_channelname = minetest.settings:get("beamer.irc_channelname") or "##MT_Data"
+b.server_name = minetest.settings:get("beamer.servername") or "Local"
+b.irc = minetest.settings:get_bool("beamer.irc") or false
+
+b.socket = {}
+b.client = nil
 
 b.error = {}
 
@@ -61,18 +62,37 @@ b.error.string = {
                     [b.error.unkown_item]                   = b.red .. S("Unknown Item."),
                 }
 
-b.package = {
-                ["server_from"] = "",
-                ["server_to"] = "",
-                ["sender"] = "",
-                ["receiver"] = "",
-                ["items"] = "",
-}
+if (b.irc) then
+    local env, request_env = _G, minetest.request_insecure_environment
+    env = request_env()
+
+    if (not request_env) then
+        minetest.log("action", "[MOD] " .. b.modname .. ": Init: Could not initalise insequre_environment.")
+        b.irc_on = false
+
+    end -- if(request_env
+
+    if (not env) then
+        minetest.log("action", "[MOD] " .. b.modname .. ": Init: Please add the mod to secure.trusted_mods to run.")
+        b.irc = false
+
+    else -- if (not env
+
+        local old_require = require
+        require = env.require
+        b.socket = require("socket")
+        require = old_require
+
+        minetest.log("action", "[MOD] " .. b.modname .. " : Init: Socket-Library loaded.")
+    end
+
+end
 
 -- ***************************************** Includes ************************************
 
 dofile(b.path .. "/lib.lua")
 dofile(b.path .. "/chatcommands.lua")
+dofile(b.path .. "/irc.lua")
 
 
 -- ***************************************** Main ****************************************
@@ -117,7 +137,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
             local pkg = {
                             ["error"] = nil,
-                            ["server_from"] = b.servername,
+                            ["server_from"] = b.server_name,
                             ["server_to"] = servername,
                             ["sender"] = username,
                             ["receiver"] = playername,
