@@ -142,12 +142,12 @@ if (b.irc) then
                 b.client:close()                                                      -- Close the Connection
                 b.irc_running = false
 
-                if ((b.irc_automatic_reconnect) and (b.reconnect < b.irc_automatic_reconnect_max)) then
+                if ((b.irc_automatic_reconnect) and (b.irc_automatic_reconnect < b.irc_automatic_reconnect_max)) then
                     b.lib.connect()
-                    b.reconnect = b.reconnect + 1
+                    b.irc_automatic_reconnect = b.irc_automatic_reconnect + 1
                 else
-                    if(b.reconnect < 1)  then
-                        b.reconnect = b.reconnect + 1
+                    if(b.irc_automatic_reconnect < 1)  then
+                        b.irc_automatic_reconnect = b.irc_automatic_reconnect + 1
 
                     end -- if(b.reconnect
 
