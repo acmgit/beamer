@@ -3,18 +3,17 @@ local S = b.S
 b.lib = {}
 
 function b.lib.send(package)
+    if(package["server_to"] == "") then package["server_to"] = b.servername end
+
     local server_from = package["server_from"]
-    local server_to = package["server_to"]
+    local server_to = package["server_to"] or b.servername
     local sender = package["sender"]
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
     local amount = tonumber(string.match(package["items"], "[%d]+"))
-    local players = minetest.get_connected_players()
 
-    if(not players[sender]) then return end
-
-    if (not b.lib.check_item_exist(item)) then
-        minetest.chat_send_player(sender, b.red .. S("Unknown Object") .. " " ..
+    if (not minetest.registered_items[item]) then
+        minetest.chat_send_player(sender, b.red .. S("Unknown Item") .. " " ..
                                             b.orange .. item ..
                                             b.red .. "!")
         return
@@ -41,34 +40,63 @@ function b.lib.send(package)
 
     if(not string.match(server_from, server_to)) then
         -- send global
+        print("send_irc")
+        if(not b.irc) then
+            minetest.chat_send_player(package["sender"], b.red .. S("Far serverbeaming is offline."))
+            return
+
+        end
+
+        b.lib.write_send(package)
+        b.lib.send_item(package["sender"], package["items"])                -- removes the items from the inventory
         b.lib.send_irc(package)
-        b.lib.write_send(sender)
 
     else
         -- send local
-        b.lib.write_send(sender)
+        local sender_inventory = b.lib.get_inventory(package["sender"])
+        b.lib.send_item(package["sender"], package["items"])                -- removes the items from the inventory
+        b.lib.write_send(package)
         b.lib.receive(package)
 
     end
 
+
 end -- send(package)
 
 function b.lib.send_irc(package)
+    b.lib.receive_item(package["sender"], package["items"])
 
 end
 
 function b.lib.handle_error(package)
+    print("Handle Error")
+    local dummy
+
+    dummy = package["server_from"]
+    package["server_from"] = package["server_to"]
+    package["server_to"] = dummy
+
+    dummy = package["sender"]
+    package["sender"] = package["receiver"]
+    package["receiver"] = dummy
+
     local server_from = package["server_from"]
     local server_to = package["server_to"]
+    local receiver = package["receiver"]
+    local sender = package["sender"]
 
-    if(not string.match(server_from, server_to)) then
-        local server = package["server_from"]
-        package["server_from"] = package["server_to"]
-        package["server_to"] = server
+    if (string.match(server_to, b.servername)) then                                          -- sending local
+        print("Send local")
+        if(minetest.get_player_by_name(receiver)) then                                       -- receiver is online?
+            minetest.chat_send_player(receiver, b.error.string[package["error"]])
+            b.lib.write_receive(package)
+            b.lib.receive_item(receiver, package["items"])
 
-        b.lib.send_irc(package)
-    else
-        minetest.chat_send_player(package["sender"], b.error.string[package["error"]])
+        end                                                                                 -- unlucky one, sender is offline
+
+    else                                                                                    -- sending global
+        print("Send global")
+        send_irc(package)
 
     end
 
@@ -76,79 +104,99 @@ end -- b.lib.handle_error
 
 function b.lib.receive(package)
     if (not string.match(package["server_to"],b.servername)) then return end       -- it's not our server, ignore it
+
     if (package["error"]) then                                                     -- has an error, errorhandling
         b.lib.handle_error(package)
-        return
-
     end
-
 
     local server_from = package["server_from"]
     local sender = package["sender"]
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
     local amount = tonumber(string.match(package["items"], "[%d]+"))
-
-    local players = minetest.get_connected_players()
+    local receiver_object = minetest.get_player_by_name(receiver)
 
     -- Player is not online
-    if(not players[receiver]) then
+    if(not receiver_object) then
+        print("Player is not online.")
         package["error"] = b.error.player_unknown
-        b.send_error(package)
+        b.lib.handle_error(package)
         return
 
     end
 
     -- Player ignores beaming
     if(b.ignore[receiver]) then
+        print("Player ignores.")
         package["error"] = b.error.locked_beam
-        b.send_error(package)
+        b.lib.handle_error(package)
         return
 
     end
 
     -- Unkown Object
-    if(not b.check_item_exist(item)) then
+    if(not b.lib.check_item_exist(item)) then
+        print("Unkown received Item.")
         package["error"] = b.error.unkown_object
-        b.send_error(package)
+        b.lib.handle_error(package)
         return
 
     end
 
     -- Playerinventory is full
-    if(not b.check_player_inventory_is_full(receiver)) then
+    if(not b.lib.check_player_inventory_is_full(receiver, package["items"])) then
         package["error"] = b.error.player_inventory_is_full
-        b.send_error(package)
+        b.lib.handle_error(package)
         return
 
     end
 
-    local receiver_inventory = minetest.get_object_inventory(receiver)
-    receiver_inventory:add_item("main", package["items"])
-
-    minetest.chat_send_player(receiver, b.orange .. server_from ..
-                                        b.green .. "@" ..
-                                        b.orange .. sender ..
-                                        b.green .. S("has beamed") ..
-                                        b.orange .. amount .. " " .. item ..
-                                        b.green .. S("in your Inventory") .. "!")
+    b.lib.write_receive(package)
+    b.lib.receive_item(package["receiver"], package["items"])
 
 end -- receive(package)
 
+function b.lib.receive_item(receiver, items)
+    local receiver_inventory = b.lib.get_inventory(receiver)
+    if(receiver_inventory) then
+        receiver_inventory:add_item("main", items)
 
-function b.lib.write_send(username, items, receiver)
-    minetest.sound_play("beamer_sound", { to_player = username, loop = false,})
-    minetest.chat_send_player(username,     b.green .. S("Beaming of") .. " " .. b.orange .. items ..
-                                        b.green .. " " .. S("to") .. " " .. b.orange .. receiver .. " " ..
-                                        b.green .. "!")
-end -- write_send
-
-function b.lib.send_error(package)
-        package["server_to"] = package["server_from"]
-        package["server_from"] = b.servername
-        b.send(package)
+    end
 
 end
+
+function b.lib.send_item(sender, items)
+    local sender_inventory = b.lib.get_inventory(sender)
+    if(sender_inventory) then
+        sender_inventory:remove_item("main", items)
+
+    end
+
+end
+
+function b.lib.write_receive(package)
+    local receiver = package["receiver"]
+    local items = package["items"]
+    minetest.chat_send_player(receiver, b.orange .. package["sender"] ..
+                                        b.green .. "@" ..
+                                        b.orange .. package["server_from"] .. " " ..
+                                        b.green .. S("has beamed") .. " " ..
+                                        b.orange .. items .. " " ..
+                                        b.green .. S("in your Inventory") .. "!")
+
+end
+
+function b.lib.write_send(package)
+    minetest.sound_play("beamer_sound", { to_player = package["sender"], loop = false,})
+    minetest.chat_send_player(package["sender"],    b.green .. S("Beaming of") .. " " ..
+                                                    b.orange .. package["items"] ..
+                                                    b.green .. " " .. S("to") .. " " ..
+                                                    b.orange .. package["receiver"] ..
+                                                    b.green .. "@" ..
+                                                    b.orange .. package["server_to"] ..
+                                                    b.green .. "!")
+
+end -- write_send
 
 function b.lib.get_servername(player)
 
@@ -210,9 +258,13 @@ function b.lib.check_item_exist(item)
 end
 
 function b.lib.check_user_has_item(username, items)
-    local user_inventory = b.lib.get_object_inventory(username)
+    local player_object = minetest.get_player_by_name(username)
+    if(not player_object) then return false end
 
-    if(not user_inventory:contains_item("main", items)) then
+    local player_inventory = player_object:get_inventory()
+    if(not player_inventory) then return false end
+
+    if(not player_inventory:contains_item("main", items)) then
         return false
 
     end
@@ -221,12 +273,12 @@ function b.lib.check_user_has_item(username, items)
 
 end
 
-function b.lib.check_player_is_online(username)
-    local player_object = b.lib.get_object(b.to["player"])
+function b.lib.check_player_is_online(username, receiver)
+    local player_object = minetest.get_player_by_name(receiver)
 
     if(not player_object) then
         minetest.chat_send_player(username, b.red .. S("Player") .. " " ..
-                                            b.orange .. b.to["player"] ..
+                                            b.orange .. receiver ..
                                             b.red .. " " .. S("not found or not online."))
         return false
 
@@ -236,13 +288,17 @@ function b.lib.check_player_is_online(username)
 
 end
 
-function b.lib.check_player_inventory_is_full(username, items)
-    local player_inventory = b.lib.get_object_inventory(b.to["player"])
+function b.lib.check_player_inventory_is_full(receiver, items)
+    local player_object = minetest.get_player_by_name(receiver)
 
+    print(player_object)
+    if (not player_object) then return false end
+
+    local player_inventory = player_object:get_inventory()
+    print(player_inventory)
+
+    if(not player_inventory) then return false end
     if(not player_inventory:room_for_item("main", items)) then
-        minetest.chat_send_player(username, b.red .. S("No room for so much items in") .. " " ..
-                                        b.orange .. b.to["player"] .. " " ..
-                                        b.red .. S("Inventory") .. "!")
         return false
 
     end
@@ -251,29 +307,11 @@ function b.lib.check_player_inventory_is_full(username, items)
 
 end
 
-function b.lib.check_player_ignores_beaming(username)
-    local player = b.to["player"]
+function b.lib.get_inventory(username)
+    local player_object = minetest.get_player_by_name(username)
 
-    if(b.ignore[player]) then
-        minetest.chat_send_player(username, b.red .. S("Player") .. " " ..
-                                            b.orange .. player ..
-                                            b.red .. " " .. S("has turned beaming off."))
-        return false
-
-    end
-
-    return true
-
-end
-
-function b.lib.get_object(name)
-    return minetest.get_player_by_name(name)
-
-end
-
-function b.lib.get_object_inventory(name)
-    local object = b.lib.get_object(name)
-    return object:get_inventory()
+    if not(player_object) then return false end
+    return player_object:get_inventory()
 
 end
 
@@ -337,7 +375,7 @@ function b.lib.show_formspec(player)
         local playername = player:get_player_name()
         minetest.show_formspec(playername, "beamer:inputform",
                         "size[8.17,1.42]" ..
-                        "field[0.16,0.48;2.36,0.87;servername;" .. S("Servername") .. ";" .. b.servername ..  "]" ..
+                        "field[0.16,0.48;2.36,0.87;servername;" .. S("Servername") .. ";]" ..
                         "field[2.4,0.48;2.6,0.87;playername;" .. S("Playername") .. ";]" ..
                         "field[4.88,0.48;2.6,0.87;node;" .. S("Node") .. ";default:cobble]" ..
                         "field[7.36,0.48;1.24,0.87;amount;" .. S("Number") .. ";1]" ..

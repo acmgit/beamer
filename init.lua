@@ -46,15 +46,16 @@ b.irc = minetest.settings:get_bool("beamer.irc_online") or false
 b.irc_name = minetest.settings:get("beamer.irc_server_ip") or "libera.chat"
 b.irc_channelname = minetest.settings:get("beamer.irc_channelname") or "##MT_Data"
 
-b.error.irc_off = 1
-b.error.player_unknown              = b.error.irc_off + 1
-b.error.player_inventory_is_full    = b.error.irc_off + 2
-b.error.locked_beam                 = b.error.irc_off + 3
-b.error.unkown_item                 = b.error.irc_off + 4
+b.error = {}
+
+local nr = 1
+b.error.player_unknown              = nr
+b.error.player_inventory_is_full    = nr + 1
+b.error.locked_beam                 = nr + 2
+b.error.unkown_item                 = nr + 3
 
 b.error.string = {
-                    [b.error.irc_off]                       = b.red .. S("Far serverbeaming is offline."),
-                    [b.error.player_unkown]                 = b.red .. S("Unkown Player."),
+                    [b.error.player_unknown]                = b.red .. S("Player unkown or offline."),
                     [b.error.player_inventory_is_full]      = b.red .. S("Inventory is full."),
                     [b.error.locked_beam]                   = b.red .. S("Locked beaming."),
                     [b.error.unkown_item]                   = b.red .. S("Unknown Item."),
@@ -114,14 +115,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
         if fields.button_send then
 
-            local pkg = {   ["server_from"] = b.servername,
+            local pkg = {
+                            ["error"] = nil,
+                            ["server_from"] = b.servername,
                             ["server_to"] = servername,
                             ["sender"] = username,
                             ["receiver"] = playername,
                             ["items"] = node .. " " .. amount,
                         }
 
-            b.lib.check_package(pkg, true)
+            b.lib.send(pkg)
 
         end -- if fields.button_send
 
