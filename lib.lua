@@ -105,7 +105,7 @@ function b.lib.receive(package)
 
             if (not package["server_to"]) then
                 package["server_to"] = package["server_from"]
-                package["server_from"] = b.servername
+                package["server_from"] = b.server_name
                 b.lib.send_irc(package)
             end
 
