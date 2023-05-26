@@ -34,7 +34,7 @@ if(b.irc) then
 
         minetest.log("action", "[MOD] " .. b.modname .. " : Module Irc: Try to connect to: "
                                             .. b.irc_server_name .. ":" .. b.irc_server_port)
-        local cl, err = assert(socket.connect(b.irc_server_name, b.irc_server_port))                        -- connect to irc
+        local cl, err = assert(socket.connect(b.irc_server_name, b.irc_server_port))  -- connect to irc
         minetest.log("action", "[MOD] " .. b.modname .. " : Module Irc: Start connection: " .. (err or "ok"))
         b.client = cl
 
@@ -88,11 +88,7 @@ if(b.irc) then
         if(package) then
             b.lib.receive(package)
         end
---[[
-        local _, e = string.find(line, ":", 2)
-        local package = string.sub(line, e +2)
-        print(package)
---]]
+
     end -- function lib.receive()
 
 end

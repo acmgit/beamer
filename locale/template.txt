@@ -12,35 +12,35 @@ Usage: servername | toggle=
 
 Beamer=
 Beaming finished.=
-Exit=
-Node=
-Number=
-Playername=
-Send=
-Servername=
-local=
+Inventory is full.=
+Locked beaming.=
+Player unkown or offline.=
+Unknown Item.=
 
 ### lib.lua ###
 
 Beamen is locked.=
 Beamen is possible again.=
 Beaming of=
+Exit=
+Far serverbeaming is offline.=
 Illegal Number of objects!=
-Inventory=
 Itemname:=
-No room for so much items in=
+Node=
 Not enough items in your Inventory!=
+Number=
 Only local beam possible.=
 Player=
+Playername=
+Send=
+Servername=
 The Servername is: =
 There is no servername set.=
-Unknown Object=
+Unknown Item=
 You can not beam something to yourself!=
 You have no Item in your Hand.=
 You need a Playername to beam!=
 has beamed=
-has turned beaming off.=
 in your Inventory=
 not found or not online.=
 to=
-with success=

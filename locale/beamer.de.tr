@@ -12,35 +12,35 @@ Usage: servername | toggle=Parameter: servername | toggle
 
 Beamer=Beamer
 Beaming finished.=Beamen fertig.
-Exit=Beenden
-Node=Objekt
-Number=Anzahl
-Playername=Spielername
-Send=Senden
-Servername=Servername
-local=lokal
+Inventory is full.=Inventar ist voll.
+Locked beaming.=Beamen gesperrt.
+Player unkown or offline.=Spieler unbekannt oder offline.
+Unknown Item.=Unbekannter Block
 
 ### lib.lua ###
 
 Beamen is locked.=Beamen ist gesperrt.
 Beamen is possible again.=Beamen wieder möglich.
 Beaming of=Beamen von
+Exit=Beenden
+Far serverbeaming is offline.=Weites serverbeamen ist offline.
 Illegal Number of objects!=Ungültige Anzahl an Objekten.
-Inventory=Inventar
 Itemname:=Objektname:
-No room for so much items in=Kein Platz so viele Objekte in
+Node=Objekt
 Not enough items in your Inventory!=Nicht genug Objekte in deinem Inventar!
+Number=Anzahl
 Only local beam possible.=Nur lokales beamen möglich.
 Player=Spieler
+Playername=Spielername
+Send=Senden
+Servername=Servername
 The Servername is: =Der Servername ist: 
 There is no servername set.=Kein Servername gesetzt.
-Unknown Object=Unbekanntes Object
+Unknown Item=Unbekannter Block
 You can not beam something to yourself!=Du kannst dir nichts selbst beamen!
 You have no Item in your Hand.=Du hast nichts in deiner Hand.
 You need a Playername to beam!=Du brauchst einen Spielernamen zum beamen!
 has beamed=beamte
-has turned beaming off.=hat beamen gesperrt.
 in your Inventory=in dein Inventar
 not found or not online.=nicht gefunden oder nicht online.
 to=zu
-with success=erfolgreich
