@@ -102,8 +102,11 @@ function b.lib.receive(package)
     if (not string.match(package["server_to"],b.server_name)) then return end       -- it's not our server, ignore it
 
     if (package["error"]) then                                                     -- has an error, errorhandling
-        b.lib.handle_error(package)
+        minetest.chat_send_player(package["receiver"], b.error.string[package["error"]])
+        b.lib.write_receive(package)
+        b.lib.receive_item(package["receiver"], package["items"])
         return
+
     end
 
     local receiver = package["receiver"]
