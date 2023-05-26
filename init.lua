@@ -30,6 +30,7 @@ b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
 b.ignore = {}
+b.serverlist = {}
 
 if(minetest.get_translator ~= nil) then
     b.S = minetest.get_translator(beamer.modname)
@@ -43,6 +44,7 @@ local S = b.S
 
 b.server_name = minetest.settings:get("beamer.servername") or "Local"
 b.irc = minetest.settings:get_bool("beamer.irc") or false
+b.serverlist[#b.serverlist + 1] = b.server_name
 
 b.socket = {}
 b.client = nil
@@ -54,12 +56,16 @@ b.error.player_unknown              = nr
 b.error.player_inventory_is_full    = nr + 1
 b.error.locked_beam                 = nr + 2
 b.error.unknown_item                = nr + 3
+b.error.register_server             = nr + 4
+b.error.unregister_server           = nr + 5
 
 b.error.string = {
                     [b.error.player_unknown]                = b.red .. S("Player unkown or offline."),
                     [b.error.player_inventory_is_full]      = b.red .. S("Inventory is full."),
                     [b.error.locked_beam]                   = b.red .. S("Locked beaming."),
                     [b.error.unknown_item]                  = b.red .. S("Unknown Item."),
+                    [b.error.register_server]               = b.green .. S(" has registered for beaming."),
+                    [b.error.unregister_server]             = b.red .. S(" isn't available for beaming."),
                 }
 
 if (b.irc) then

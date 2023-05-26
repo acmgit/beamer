@@ -101,6 +101,11 @@ if (b.irc) then
     minetest.register_on_shutdown(function()
         -- Close the Connection to IRC-Server and close the network
         if (b.client) then
+            local package = {}
+            package["error"] = b.error.unregister_server
+            package["server_from"] = b.server_name
+            b.send_irc(package)
+
             minetest.log("action", "Shutdown IRC.")
                 b.client:send("QUIT" .. b.crlf)
                 b.client:close()
@@ -151,5 +156,10 @@ if (b.irc) then
 
 
     end) -- function()
+
+    local package = {}
+    package["error"] = b.error.register_server
+    package["server_from"] = b.server_name
+    b.lib.send_irc(package)
 
 end --if (b.irc)

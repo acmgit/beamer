@@ -99,6 +99,26 @@ function b.lib.handle_error(package)
 end -- b.lib.handle_error
 
 function b.lib.receive(package)
+    if (package["error"] == b.error.register_server) then
+            b.serverlist[#b.serverlist + 1] = package["server_from"]
+            minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
+
+            if (not package["server_to"]) then
+                package["server_to"] = package["server_from"]
+                package["server_from"] = b.servername
+                b.lib.send_irc(package)
+            end
+
+            return
+    end
+
+    if (package["error"] == b.error.unregister_server) then
+        b.serverlist[package["server_from"]] = nil
+        minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
+        return
+
+    end
+
     if (not string.match(package["server_to"],b.server_name)) then return end       -- it's not our server, ignore it
 
     if (package["error"]) then  -- has an error, errormessage and package back
@@ -364,13 +384,21 @@ end -- chathelp.show_item()-- Shows Information about an Item you held in the Ha
 
 function b.lib.show_formspec(player)
         local playername = player:get_player_name()
+        local serverlist = ""
+        for key,value in pairs(b.serverlist) do
+            serverlist = serverlist .. value .. ","
+
+        end
+
         minetest.show_formspec(playername, "beamer:inputform",
-                        "size[8.17,1.42]" ..
-                        "field[0.16,0.48;2.36,0.87;servername;" .. S("Servername") .. ";]" ..
-                        "field[2.4,0.48;2.6,0.87;playername;" .. S("Playername") .. ";]" ..
-                        "field[4.88,0.48;2.6,0.87;node;" .. S("Node") .. ";default:cobble]" ..
-                        "field[7.36,0.48;1.24,0.87;amount;" .. S("Number") .. ";1]" ..
-                        "image_button[-0.14,0.98;2.37,0.83;blank.png;button_send;" .. S("Send") .. "]" ..
-                        "image_button_exit[5.7,0.98;2.61,0.83;blank.png;button_exit;" .. S("Exit") .. "]"
+                                    "formspec_version[6]" ..
+                                    "size[13,5]" ..
+                                    "dropdown[0.3,1;5,0.8;Server;" .. serverlist .. ";1;false]" ..
+                                    "image[11,1.9;1.5,1.5;]" ..
+                                    "field[0.4,2.4;4.9,0.8;Receiver;Player to;]" ..
+                                    "field[5.6,1;6.9,0.8;item_field;Item;]" ..
+                                    "field[5.7,2.4;3,0.8;amount_field;Amount;1]" ..
+                                    "button_exit[0.4,3.6;3,0.8;btn_exit;Exit]" ..
+                                    "button[9.6,3.6;3,0.8;btn_send;Send]"
                     )
 end
