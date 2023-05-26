@@ -101,7 +101,14 @@ end -- b.lib.handle_error
 function b.lib.receive(package)
     if (not string.match(package["server_to"],b.server_name)) then return end       -- it's not our server, ignore it
 
-    if (package["error"]) then                                                     -- has an error, errorhandling
+    print(package["error"])
+    print(package["server_from"])
+    print(package["server_to"])
+    print(package["sender"])
+    print(package["receiver"])
+
+    if (package["error"]) then  -- has an error, errorhandling
+        print(package["receiver"] .. " " .. package["sender"])
         minetest.chat_send_player(package["receiver"], b.error.string[package["error"]])
         b.lib.write_receive(package)
         b.lib.receive_item(package["receiver"], package["items"])
@@ -131,7 +138,7 @@ function b.lib.receive(package)
 
     -- Unkown Object
     if(not b.lib.check_item_exist(item)) then
-        package["error"] = b.error.unkown_object
+        package["error"] = b.error.unknown_item
         b.lib.handle_error(package)
         return
 

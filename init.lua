@@ -53,13 +53,13 @@ local nr = 1
 b.error.player_unknown              = nr
 b.error.player_inventory_is_full    = nr + 1
 b.error.locked_beam                 = nr + 2
-b.error.unkown_item                 = nr + 3
+b.error.unknown_item                = nr + 3
 
 b.error.string = {
                     [b.error.player_unknown]                = b.red .. S("Player unkown or offline."),
                     [b.error.player_inventory_is_full]      = b.red .. S("Inventory is full."),
                     [b.error.locked_beam]                   = b.red .. S("Locked beaming."),
-                    [b.error.unkown_item]                   = b.red .. S("Unknown Item."),
+                    [b.error.unknown_item]                  = b.red .. S("Unknown Item."),
                 }
 
 if (b.irc) then
