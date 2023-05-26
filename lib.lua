@@ -79,10 +79,8 @@ function b.lib.handle_error(package)
     package["sender"] = package["receiver"]
     package["receiver"] = dummy
 
-    --local server_from = package["server_from"]
     local server_to = package["server_to"]
     local receiver = package["receiver"]
-    --local sender = package["sender"]
 
     if (string.match(server_to, b.server_name)) then                                          -- sending local
         if(minetest.get_player_by_name(receiver)) then                                       -- receiver is online?
@@ -105,13 +103,11 @@ function b.lib.receive(package)
 
     if (package["error"]) then                                                     -- has an error, errorhandling
         b.lib.handle_error(package)
+        return
     end
 
-    --local server_from = package["server_from"]
-    --local sender = package["sender"]
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
-    --local amount = tonumber(string.match(package["items"], "[%d]+"))
     local receiver_object = minetest.get_player_by_name(receiver)
 
     -- Player is not online
@@ -197,7 +193,7 @@ function b.lib.get_servername(player)
 
         if (beamer.servername ~= "") then
             minetest.chat_send_player(player, b.green .. S("The Servername is: ") ..
-                                              b.orange .. b.server_name .. "!")
+                                              b.orange .. b.server_name .. b.green .. "!")
 
         else
             minetest.chat_send_player(player, b.red .. S("There is no servername set.") .. "\n" ..

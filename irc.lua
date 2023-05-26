@@ -62,15 +62,6 @@ if(b.irc) then
 
         end -- if(b.irc_user_password =~ ""
 
-        line = "JOIN " .. b.irc_channel_name .. b.crlf
-        err = b.client:send(line)
-        minetest.log("action","[MOD] " .. b.modname .. " : Module Irc: " .. line .. " Error: " .. (err or "ok"))
-
-        line = "TOPIC " .. b.irc_channel_name .. " :" .. b.irc_channel_topic .. b.crlf
-        err = b.client:send(line)
-        minetest.log("action", "[MOD] " .. b.modname .. " : Module Irc: " .. line .. "Error:" .. (err or "ok"))
-
-        minetest.log("action", "[MOD] " .. b.modname .. " : Module Irc: Join Channel: " .. b.irc_channel_name)
         if(b.irc_channel_password ~= "") then
                 line = "JOIN " .. b.irc_channel_name .. " " .. b.irc_channel_password .. b.crlf
 
@@ -78,6 +69,12 @@ if(b.irc) then
                 line = "JOIN " .. b.irc_channel_name .. b.crlf
 
         end -- if(not b.irc_password
+        err = b.client:send(line)
+        minetest.log("action","[MOD] " .. b.modname .. " : Module Irc: " .. line .. " Error: " .. (err or "ok"))
+
+        line = "TOPIC " .. b.irc_channel_name .. " :" .. b.irc_channel_topic .. b.crlf
+        err = b.client:send(line)
+        minetest.log("action", "[MOD] " .. b.modname .. " : Module Irc: " .. line .. "Error:" .. (err or "ok"))
 
     end -- function b.lib.irc_connect
 
@@ -90,7 +87,6 @@ if(b.irc) then
         local package = minetest.deserialize(pkg)
         if(package) then
             b.lib.receive(package)
-            print("Package received.")
         end
 --[[
         local _, e = string.find(line, ":", 2)
