@@ -3,44 +3,46 @@
 
 ### chatcommands.lua ###
 
+Beamer is trying to reconnect.=
 Locks or unlocks beaming.=
 Scans the object in your hand.=
 Tells you the servername.=
-Usage: servername | toggle=
 
 ### init.lua ###
 
+ has registered for beaming.=
+ isn't available for beaming.=
 Beamer=
 Beaming finished.=
-Exit=
-Node=
-Number=
-Playername=
-Send=
-Servername=
-local=
+Inventory is full.=
+Locked beaming.=
+Player unkown or offline.=
+Unknown Item.=
 
 ### lib.lua ###
 
+Amount=
 Beamen is locked.=
 Beamen is possible again.=
 Beaming of=
+Exit=
+Far serverbeaming is offline.=
 Illegal Number of objects!=
-Inventory=
+Item=
 Itemname:=
-No room for so much items in=
 Not enough items in your Inventory!=
 Only local beam possible.=
 Player=
+Receiver=
+Send=
+Server=
 The Servername is: =
 There is no servername set.=
-Unknown Object=
+Unknown Item=
 You can not beam something to yourself!=
 You have no Item in your Hand.=
 You need a Playername to beam!=
 has beamed=
-has turned beaming off.=
 in your Inventory=
 not found or not online.=
 to=
-with success=

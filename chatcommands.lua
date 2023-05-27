@@ -2,19 +2,26 @@ local b = beamer
 local S = beamer.S
 
 minetest.register_chatcommand("beamer", {
-	params = "servername | toggle | what_is",
+	params = "servername | toggle | reconnect",
 	description = "servername " .. S("Tells you the servername.") .. "\n" ..
                   "toggle " .. S("Locks or unlocks beaming."),
 
     func = function(player, param)
-        if(string.match(param, "servername")) then
+        if(string.match(string.lower(param), "servername")) then
             b.lib.get_servername(player)
 
-        elseif(string.match(param, "toggle")) then
+        elseif(string.match(string.lower(param), "toggle")) then
             b.lib.toggle_beam(player)
 
+        elseif(string.match(string.lower(param), "reconnect")) then
+            if minetest.get_player_privs(player).kick then
+                b.lib.reconnect_number = 0
+                b.lib.connect()
+                minetest.chat_send_player(b.green .. S("Beamer is trying to reconnect."))
+            end
+
         else
-            minetest.chat_send_player(player,b.red .. S("Usage: servername | toggle"))
+            minetest.chat_send_player(player,b.red .. "Usage: servername | toggle | reconnect")
 
         end
 

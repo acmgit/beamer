@@ -1,2 +1,15 @@
-# Servername
-beamer.Servername (Name of the Server) string localhost
+# init
+beamer.irc (Local or Global) bool false
+beamer.servername (Name of the World) string Local
+
+# irc
+beamer.irc_server_name (IP of the IRC) string "libera.chat"
+beamer.irc_server_port (Port of the IRC) int 6667
+beamer.irc_channel_name (Channel on the IRC) string ##MT_Local_Data
+beamer.irc_channel_topic (Topic of the IRC-Channel) string MT_Server_data
+beamer.irc_channel_password (Password for the IRC-Channel) string ""
+beamer.irc_client_timeout (Set's the timeout of the IRC-Client) float 0.03
+beamer.irc_automatic_reconnect (Reconnect on lose the connection) bool false
+beamer.irc_automatic_reconnect_max (Max. tries to connect) int 5
+beamer.irc_user_password (Password for registered Users) string ""
+beamer.irc_server_step (Check message every ) float 2
