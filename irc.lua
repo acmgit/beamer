@@ -23,6 +23,7 @@ b.irc_automatic_reconnect = minetest.settings:get_bool("beamer.irc_automatic_rec
 b.irc_automatic_reconnect_max = tonumber(minetest.settings:get("beamer.irc_automatic_reconnect_max")) or 5
 b.irc_user_password = minetest.settings:get("beamer.irc_user_password") or ""
 b.irc_server_step = tonumber(minetest.settings:get("beamer.irc_server_step")) or 2
+b.irc_automatic_reconnect_number = 0
 
 if(b.irc) then
 
@@ -104,7 +105,7 @@ if (b.irc) then
             local package = {}
             package["error"] = b.error.unregister_server
             package["server_from"] = b.server_name
-            b.send_irc(package)
+            b.lib.send_irc(package)
 
             minetest.log("action", "Shutdown IRC.")
                 b.client:send("QUIT" .. b.crlf)
@@ -139,14 +140,9 @@ if (b.irc) then
                 b.client:close()                                                      -- Close the Connection
                 b.irc_running = false
 
-                if ((b.irc_automatic_reconnect) and (b.irc_automatic_reconnect < b.irc_automatic_reconnect_max)) then
+                if ((b.irc_automatic_reconnect) and (b.irc_automatic_reconnect_number < b.irc_automatic_reconnect_max)) then
                     b.lib.connect()
-                    b.irc_automatic_reconnect = b.irc_automatic_reconnect + 1
-                else
-                    if(b.irc_automatic_reconnect < 1)  then
-                        b.irc_automatic_reconnect = b.irc_automatic_reconnect + 1
-
-                    end -- if(b.reconnect
+                    b.irc_automatic_reconnect_number = b.irc_automatic_reconnect_number + 1
 
                 end -- if(b.automatic_reconnect
 

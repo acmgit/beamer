@@ -31,6 +31,10 @@ b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
 b.ignore = {}
 b.serverlist = {}
+b.formspec_fields = {}
+b.formspec_fields["itemname"] = "default:cobble"
+b.formspec_fields["receiver"] = ""
+b.formspec_fields["amount"] = 1
 
 if(minetest.get_translator ~= nil) then
     b.S = minetest.get_translator(beamer.modname)
@@ -131,15 +135,36 @@ minetest.register_craft({
 			},
 })
 
+local servername
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
+    if not (player and player:is_player()) then
+        return
+    end
+
     if formname == "beamer:inputform" and player then
         local username = player:get_player_name()
-        local servername = fields.servername or "local"
-        local playername = fields.playername or ""
-        local node = fields.node or ""
+        local playername = fields.receiver or ""
+        local node = fields.itemstring or ""
         local amount = fields.amount or 0
 
-        if fields.button_send then
+        b.formspec_fields["itemname"] = node
+        b.formspec_fields["amount"] = amount
+        b.formspec_fields["receiver"] = playername
+
+        local event = minetest.explode_textlist_event(fields.list)
+
+        if (event.type == "CHG") and event.index then
+		    servername = b.serverlist[event.index]
+
+        end
+
+        if (event.type == "DCL") and event.index then    -- DCL =doubleclick CHG = leftclick single
+		   servername = b.serverlist[event.index]
+
+		end -- if event.type
+
+        if fields.btn_send then
 
             local pkg = {
                             ["error"] = nil,
@@ -155,11 +180,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         end -- if fields.button_send
 
 
-        if fields.button_exit then
+        if fields.btn_exit then
             minetest.chat_send_player(username, b.green .. S("Beaming finished."))
-            b.beam_far = false
+            b.formspec_fields["itemname"] = "default:cobble"
+            b.formspec_fields["amount"] = 1
+            b.formspec_fields["receiver"] = ""
+            servername = ""
+            return true
 
         end -- if fields.button_exit
+        b.lib.show_formspec(player)
 
     end -- if formname
 

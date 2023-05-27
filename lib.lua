@@ -334,7 +334,7 @@ function b.lib.punch_beamer(pos, node, puncher, pointed_thing)
     local item_name = item_stack:get_name()
 
     if(not item_name) then
-        beamer.lib.show_formspec(puncher)
+        b.lib.show_formspec(puncher)
         return
 
     else -- if(not item)
@@ -343,7 +343,7 @@ function b.lib.punch_beamer(pos, node, puncher, pointed_thing)
             minetest.node_dig(pos, node, puncher)
 
         else
-            beamer.lib.show_formspec(puncher)
+            b.lib.show_formspec(puncher)
 
         end
 
@@ -391,14 +391,24 @@ function b.lib.show_formspec(player)
         end
 
         minetest.show_formspec(playername, "beamer:inputform",
-                                    "formspec_version[6]" ..
-                                    "size[13,5]" ..
-                                    "dropdown[0.3,1;5,0.8;Server;" .. serverlist .. ";1;false]" ..
-                                    "image[11,1.9;1.5,1.5;]" ..
-                                    "field[0.4,2.4;4.9,0.8;Receiver;Player to;]" ..
-                                    "field[5.6,1;6.9,0.8;item_field;Item;]" ..
-                                    "field[5.7,2.4;3,0.8;amount_field;Amount;1]" ..
-                                    "button_exit[0.4,3.6;3,0.8;btn_exit;Exit]" ..
-                                    "button[9.6,3.6;3,0.8;btn_send;Send]"
+                    "formspec_version[6]" ..
+                    "size[13,5]" ..
+                    "label[0.2,0.3;" .. S("Server") .. "]" ..
+                    "textlist[0.2,0.6;4.8,2.8;list;" .. serverlist .. ";;false]" ..
+                    "field[5.1,1.9;7.4,0.8;itemstring;" .. S("Item") .. ";" .. b.formspec_fields["itemname"] .. "]" ..
+                    --"field_close_on_enter[itemstring;false]" ..
+                    "field[5.1,3.2;3,0.8;amount;" .. S("Amount") .. ";" .. b.formspec_fields["amount"] .. "]" ..
+                    --"field_close_on_enter[amount;false]" ..
+                    "field[5.1,0.6;7.3,0.8;receiver;" .. S("Receiver") .. ";" .. b.formspec_fields["receiver"] .. "]" ..
+                    --"field_close_on_enter[receiver;false]" ..
+                    "item_image[8.4,3;1,1;" .. b.formspec_fields["itemname"] .. "]" ..
+                    "button_exit[9.7,4;3,0.8;btn_exit;" .. S("Exit") .. "]" ..
+                    "button[0.2,4;3,0.8;btn_send;" .. S("Send") .. "]"
                     )
+end
+
+function b.lib.get_formspec_index(fields)
+
+
+
 end
