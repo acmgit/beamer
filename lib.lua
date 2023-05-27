@@ -113,7 +113,13 @@ function b.lib.receive(package)
     end
 
     if (package["error"] == b.error.unregister_server) then
-        b.serverlist[package["server_from"]] = nil
+        local servername = package["server_from"]
+        for k,v in pairs(b.serverlist) do
+            if(string.match(v, servername)) then
+                b.serverlist[k] = nil
+            end
+
+        end
         minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
         return
 
