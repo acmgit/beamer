@@ -100,13 +100,16 @@ end -- b.lib.handle_error
 
 function b.lib.receive(package)
     if (package["error"] == b.error.register_server) then
-            b.serverlist[#b.serverlist + 1] = package["server_from"]
-            minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
-
             if (not package["server_to"]) then
+                b.serverlist[#b.serverlist + 1] = package["server_from"]
+                minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
                 package["server_to"] = package["server_from"]
                 package["server_from"] = b.server_name
                 b.lib.send_irc(package)
+            elseif (string.match(package["server_to"], b.server_name)) then
+                b.serverlist[#b.serverlist + 1] = package["server_from"]
+                minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
+
             end
 
             return
