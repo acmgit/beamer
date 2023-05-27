@@ -82,7 +82,7 @@ if(b.irc) then
     function b.lib.receive_from_irc(line)
         if(not b.irc_running) then return end
         local e
-        _, e = string.find(line, ":", 4)
+        _, e = string.find(line, "PRIVMSG " .. b.irc_channel_name .. " :")
         e = e or 0
         local pkg = string.sub(line, e + 1, string.len(line))
         local package = minetest.deserialize(pkg)
@@ -108,10 +108,10 @@ if (b.irc) then
             b.lib.send_irc(package)
 
             minetest.log("action", "Shutdown IRC.")
-                b.client:send("QUIT" .. b.crlf)
-                b.client:close()
-                b.client = nil
-                b.irc_running = false
+            b.client:send("QUIT" .. b.crlf)
+            b.client:close()
+            b.client = nil
+            b.irc_running = false
 
         end -- if(b.client
 
@@ -130,6 +130,7 @@ if (b.irc) then
                     b.client:send("PONG" .. ping .. b.crlf)                                 -- Answer with Pong
                 else
                     b.lib.receive_from_irc(line)
+                    minetest.log("action", "[MOD] " .. b.modname .. "Receive_IRC : " .. line)
 
                 end -- if( (a) and (e)
 
@@ -141,7 +142,7 @@ if (b.irc) then
                 b.irc_running = false
 
                 if ((b.irc_automatic_reconnect) and (b.irc_automatic_reconnect_number < b.irc_automatic_reconnect_max)) then
-                    b.lib.connect()
+                    b.lib.irc_connect()
                     b.irc_automatic_reconnect_number = b.irc_automatic_reconnect_number + 1
 
                 end -- if(b.automatic_reconnect
