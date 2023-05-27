@@ -17,7 +17,8 @@ minetest.register_chatcommand("beamer", {
             if minetest.get_player_privs(player).kick then
                 b.lib.reconnect_number = 0
                 b.lib.irc_connect()
-                minetest.chat_send_player(b.green .. S("Beamer is trying to reconnect."))
+                minetest.chat_send_player(player, b.green .. S("Beamer is trying to reconnect."))
+
             end
 
         else
