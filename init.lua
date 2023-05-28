@@ -168,8 +168,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
             local pkg = {
                             ["error"] = nil,
-                            ["server_from"] = b.server_name,
-                            ["server_to"] = servername,
+                            ["server_from"] = b.server_name or b.server_name,
+                            ["server_to"] = servername or b.server_name,
                             ["sender"] = username,
                             ["receiver"] = playername,
                             ["items"] = node .. " " .. amount,
