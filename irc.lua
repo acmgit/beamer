@@ -70,6 +70,7 @@ if(b.irc) then
                 line = "JOIN " .. b.irc_channel_name .. b.crlf
 
         end -- if(not b.irc_password
+
         err = b.client:send(line)
         minetest.log("action","[MOD] " .. b.modname .. " : Module Irc: " .. line .. " Error: " .. (err or "ok"))
 

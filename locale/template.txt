@@ -3,7 +3,9 @@
 
 ### chatcommands.lua ###
 
+Beamer is already online.=
 Beamer is trying to reconnect.=
+Far beaming is off. Ask your Admin.=
 Locks or unlocks beaming.=
 Scans the object in your hand.=
 Tells you the servername.=
@@ -30,6 +32,7 @@ Far serverbeaming is offline.=
 Illegal Number of objects!=
 Item=
 Itemname:=
+No Receiver. To whom should i beam?=
 Not enough items in your Inventory!=
 Only local beam possible.=
 Player=

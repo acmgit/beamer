@@ -20,6 +20,12 @@ function b.lib.send(package)
 
     end
 
+    if (receiver == "") then
+        minetest.chat_send_player(sender, b.red .. S("No Receiver. To whom should i beam?"))
+        return
+
+    end
+
     if (string.match(server_from .. "@" .. sender, server_to .. "@" .. receiver)) then
         minetest.chat_send_player(sender, b.red .. S("You can not beam something to yourself!"))
         return

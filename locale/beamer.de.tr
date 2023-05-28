@@ -3,7 +3,9 @@
 
 ### chatcommands.lua ###
 
+Beamer is already online.=Beamer ist schon online.
 Beamer is trying to reconnect.=Beamer versucht sich neu zu verbinden.
+Far beaming is off. Ask your Admin.=Weites beamen ist aus. Frag den Admin.
 Locks or unlocks beaming.=Sperrt oder entsperrt beamen.
 Scans the object in your hand.=Prüft das Objekt in deiner Hand.
 Tells you the servername.=Sagt dir den Servernamen.
@@ -30,6 +32,7 @@ Far serverbeaming is offline.=Weites serverbeamen ist offline.
 Illegal Number of objects!=Ungültige Anzahl an Objekten.
 Item=Block
 Itemname:=Objektname:
+No Receiver. To whom should i beam?=
 Not enough items in your Inventory!=Nicht genug Objekte in deinem Inventar!
 Only local beam possible.=Nur lokales beamen möglich.
 Player=Spieler
