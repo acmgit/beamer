@@ -105,6 +105,7 @@ function b.lib.handle_error(package)
 end -- b.lib.handle_error
 
 function b.lib.receive(package)
+
     if (package["error"] == b.error.register_server) then
             if (not package["server_to"]) then
                 b.serverlist[#b.serverlist + 1] = package["server_from"]
@@ -129,6 +130,7 @@ function b.lib.receive(package)
             end
 
         end
+
         minetest.chat_send_all(b.orange .. package["server_from"] .. " " .. b.error.string[package["error"]])
         return
 
@@ -136,17 +138,26 @@ function b.lib.receive(package)
 
     if (not string.match(package["server_to"],b.server_name)) then return end       -- it's not our server, ignore it
 
-    if (package["error"]) then  -- has an error, errormessage and package back
-        minetest.chat_send_player(package["receiver"], b.error.string[package["error"]])
-        b.lib.write_receive(package)
-        b.lib.receive_item(package["receiver"], package["items"])
-        return
+    if not b.lib.security_check(package) then
+        package["error"] = b.error.invalid_package
 
     end
 
     local receiver = package["receiver"]
     local item = string.match(package["items"], "[%a%p]+")
     local receiver_object = minetest.get_player_by_name(receiver)
+
+    if (package["error"]) then  -- has an error, errormessage and package back
+
+        if(receiver_object) then
+            minetest.chat_send_player(receiver, b.error.string[package["error"]])
+            b.lib.write_receive(package)
+            b.lib.receive_item(package["receiver"], package["items"])
+        end
+
+        return
+
+    end
 
     -- Player is not online
     if(not receiver_object) then
@@ -263,7 +274,7 @@ function b.lib.check_playername(username)
 
     return true
 
-end
+end -- check_playername
 
 function b.lib.check_amount(amount)
     local value = tonumber(amount)
@@ -275,7 +286,7 @@ function b.lib.check_amount(amount)
 
     return true
 
-end
+end -- check_amount
 
 function b.lib.check_item_exist(item)
     if (not minetest.registered_items[item]) then
@@ -284,7 +295,7 @@ function b.lib.check_item_exist(item)
     end
     return true
 
-end
+end -- check_item_exist
 
 function b.lib.check_user_has_item(username, items)
     local player_object = minetest.get_player_by_name(username)
@@ -300,7 +311,7 @@ function b.lib.check_user_has_item(username, items)
 
     return true
 
-end
+end -- check_user_has_item
 
 function b.lib.check_player_is_online(username, receiver)
     local player_object = minetest.get_player_by_name(receiver)
@@ -315,7 +326,7 @@ function b.lib.check_player_is_online(username, receiver)
 
     return true
 
-end
+end -- check_player_is_online
 
 function b.lib.check_player_inventory_is_full(receiver, items)
     local player_object = minetest.get_player_by_name(receiver)
@@ -331,7 +342,7 @@ function b.lib.check_player_inventory_is_full(receiver, items)
 
     return true
 
-end
+end -- check_player_inventory_is_full
 
 function b.lib.get_inventory(username)
     local player_object = minetest.get_player_by_name(username)
@@ -339,12 +350,11 @@ function b.lib.get_inventory(username)
     if not(player_object) then return false end
     return player_object:get_inventory()
 
-end
+end -- get_inventory
 
-function b.lib.punch_beamer(pos, node, puncher, pointed_thing)
+function b.lib.punch_beamer(pos, node, puncher)
     if (not puncher) then return end
 
-    local player_name = puncher:get_player_name()
     local item_stack = puncher:get_wielded_item()
     local item_name = item_stack:get_name()
 
@@ -395,12 +405,12 @@ function b.lib.show_item(name)
 
 	end -- if( player
 
-end -- chathelp.show_item()-- Shows Information about an Item you held in the Hand
+end -- show_item()-- Shows Information about an Item you held in the Hand
 
 function b.lib.show_formspec(player)
         local playername = player:get_player_name()
         local serverlist = ""
-        for key,value in pairs(b.serverlist) do
+        for _,value in pairs(b.serverlist) do
             serverlist = serverlist .. value .. ","
 
         end
@@ -420,10 +430,19 @@ function b.lib.show_formspec(player)
                     "button_exit[9.7,4;3,0.8;btn_exit;" .. S("Exit") .. "]" ..
                     "button[0.2,4;3,0.8;btn_send;" .. S("Send") .. "]"
                     )
-end
+end -- show_formspec
 
-function b.lib.get_formspec_index(fields)
+function b.lib.security_check(package)
 
+    local is_valid = true
 
+    if package["error"] and type(package["error"]) ~= "number" then is_valid = false end
+    if package["receiver"] and type(package["receiver"]) ~= "string" then is_valid = false end
+    if package["item"] and type(package["item"]) ~= "string" then is_valid = false end
+    if package["sender"] and type(package["sender"]) ~= "string" then is_valid = false end
+    if package["server_to"] and type(package["server_to"]) ~= "string" then is_valid = false end
+    if package["server_from"] and type(package["server_from"]) ~= "string" then is_valid = false end
 
-end
+    return is_valid
+
+end -- security_check

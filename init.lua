@@ -25,7 +25,7 @@ b.light_blue = minetest.get_color_escape_sequence('#8888FF')
 b.light_green = minetest.get_color_escape_sequence('#88FF88')
 b.light_red = minetest.get_color_escape_sequence('#FF8888')
 
-b.version = "1.3"
+b.version = "1.4"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
@@ -57,11 +57,18 @@ b.error = {}
 
 local nr = 1
 b.error.player_unknown              = nr
-b.error.player_inventory_is_full    = nr + 1
-b.error.locked_beam                 = nr + 2
-b.error.unknown_item                = nr + 3
-b.error.register_server             = nr + 4
-b.error.unregister_server           = nr + 5
+nr = nr + 1
+b.error.player_inventory_is_full    = nr
+nr = nr + 1
+b.error.locked_beam                 = nr
+nr = nr + 1
+b.error.unknown_item                = nr
+nr = nr + 1
+b.error.register_server             = nr
+nr = nr + 1
+b.error.unregister_server           = nr
+nr = nr + 1
+b.error.invalid_package             = nr
 
 b.error.string = {
                     [b.error.player_unknown]                = b.red .. S("Player unkown or offline."),
@@ -70,6 +77,7 @@ b.error.string = {
                     [b.error.unknown_item]                  = b.red .. S("Unknown Item."),
                     [b.error.register_server]               = b.green .. S(" has registered for beaming."),
                     [b.error.unregister_server]             = b.red .. S(" isn't available for beaming."),
+                    [b.error.invalid_package]             = b.red .. S(" transporter malfunction."),
                 }
 
 if (b.irc) then
@@ -122,7 +130,7 @@ minetest.register_node("beamer:beamer", {
         groups = { cracky = 1, },
         is_ground_content = false,
         on_punch = function(pos, node, puncher, pointed_thing)
-                        b.lib.punch_beamer(pos, node, puncher, pointed_thing)
+                        b.lib.punch_beamer(pos, node, puncher)
 
                     end,
 })
