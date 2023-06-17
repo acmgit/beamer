@@ -1,5 +1,7 @@
 local b = beamer
 local socket = b.socket
+local key_network = b.key_network
+
 b.socket = nil
 
 b.irc_running = false
@@ -23,7 +25,9 @@ b.irc_automatic_reconnect = minetest.settings:get_bool("beamer.irc_automatic_rec
 b.irc_automatic_reconnect_max = tonumber(minetest.settings:get("beamer.irc_automatic_reconnect_max")) or 5
 b.irc_user_password = minetest.settings:get("beamer.irc_user_password") or ""
 b.irc_server_step = tonumber(minetest.settings:get("beamer.irc_server_step")) or 2
+b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 64
 b.irc_automatic_reconnect_number = 0
+
 
 if(b.irc) then
 
@@ -86,6 +90,7 @@ if(b.irc) then
         _, e = string.find(line, "PRIVMSG " .. b.irc_channel_name .. " :")
         e = e or 0
         local pkg = string.sub(line, e + 1, string.len(line))
+        pkg = b.lib.decrypt(pkg, key_network)
         local package = minetest.deserialize(pkg)
         if(package) then
             b.lib.receive(package)
@@ -106,6 +111,7 @@ if (b.irc) then
             local package = {}
             package["error"] = b.error.unregister_server
             package["server_from"] = b.server_name
+            package = b.lib.encrypt(package, b.key_network)
             b.lib.send_irc(package)
 
             minetest.log("action", "Shutdown IRC.")

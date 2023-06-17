@@ -1,5 +1,7 @@
 local b = beamer
 local S = b.S
+local key_network = b.key_network
+
 b.lib = {}
 
 function b.lib.send(package)
@@ -69,6 +71,7 @@ end -- send(package)
 
 function b.lib.send_irc(package)
     local message = minetest.serialize(package)
+    message = b.lib.encrypt(message, key_network)
     message = "PRIVMSG "   .. b.irc_channel_name .. " :" .. message .. b.crlf
     b.client:send(message)
 

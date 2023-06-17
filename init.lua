@@ -25,7 +25,7 @@ b.light_blue = minetest.get_color_escape_sequence('#8888FF')
 b.light_green = minetest.get_color_escape_sequence('#88FF88')
 b.light_red = minetest.get_color_escape_sequence('#FF8888')
 
-b.version = "1.4"
+b.version = "1.5"
 b.modname = minetest.get_current_modname()
 b.path = minetest.get_modpath(beamer.modname)
 b.S = nil
@@ -111,7 +111,7 @@ end
 dofile(b.path .. "/lib.lua")
 dofile(b.path .. "/chatcommands.lua")
 dofile(b.path .. "/irc.lua")
-
+dofile(b.path .. "/crypt.lua")
 
 -- ***************************************** Main ****************************************
 
