@@ -2,7 +2,7 @@ local b = beamer
 local key_network = b.key_network
 
 function b.lib.encrypt(phrase, public_key)
-    local private_key = os.time() % 255
+    local private_key = os.time() % 256
     local crypted_pass_one = ""
     local crypted_pass_two = ""
     local char = ""

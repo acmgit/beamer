@@ -35,6 +35,7 @@ b.formspec_fields = {}
 b.formspec_fields["itemname"] = "default:cobble"
 b.formspec_fields["receiver"] = ""
 b.formspec_fields["amount"] = 1
+b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 64
 
 if(minetest.get_translator ~= nil) then
     b.S = minetest.get_translator(beamer.modname)
@@ -109,9 +110,10 @@ end
 -- ***************************************** Includes ************************************
 
 dofile(b.path .. "/lib.lua")
+dofile(b.path .. "/crypt.lua")
 dofile(b.path .. "/chatcommands.lua")
 dofile(b.path .. "/irc.lua")
-dofile(b.path .. "/crypt.lua")
+
 
 -- ***************************************** Main ****************************************
 

@@ -25,7 +25,6 @@ b.irc_automatic_reconnect = minetest.settings:get_bool("beamer.irc_automatic_rec
 b.irc_automatic_reconnect_max = tonumber(minetest.settings:get("beamer.irc_automatic_reconnect_max")) or 5
 b.irc_user_password = minetest.settings:get("beamer.irc_user_password") or ""
 b.irc_server_step = tonumber(minetest.settings:get("beamer.irc_server_step")) or 2
-b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 64
 b.irc_automatic_reconnect_number = 0
 
 
