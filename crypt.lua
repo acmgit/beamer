@@ -19,6 +19,7 @@ local function xor (a,b)
 end
 
 function b.lib.encrypt(phrase, public_key)
+    if not type(phrase) == "string" then return end
     local private_key = os.time() % 256
     local encrypted_pass_one = ""
     local encrypted_pass_two = ""
@@ -44,6 +45,7 @@ function b.lib.encrypt(phrase, public_key)
 end
 
 function b.lib.decrypt(phrase, public_key)
+    if not type(phrase) == "string" then return end
     local decrypted_pass_one = ""
     local decrypted_pass_two = ""
     local chr = ""

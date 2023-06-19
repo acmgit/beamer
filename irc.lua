@@ -110,7 +110,6 @@ if (b.irc) then
             local package = {}
             package["error"] = b.error.unregister_server
             package["server_from"] = b.server_name
-            package = b.lib.encrypt(package, b.key_network)
             b.lib.send_irc(package)
 
             minetest.log("action", "Shutdown IRC.")
