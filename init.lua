@@ -35,7 +35,8 @@ b.formspec_fields = {}
 b.formspec_fields["itemname"] = "default:cobble"
 b.formspec_fields["receiver"] = ""
 b.formspec_fields["amount"] = 1
-b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 64
+b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 12345
+b.key_network = b.key_network % 256
 
 if(minetest.get_translator ~= nil) then
     b.S = minetest.get_translator(beamer.modname)

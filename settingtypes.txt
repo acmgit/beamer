@@ -13,4 +13,4 @@ beamer.irc_automatic_reconnect (Reconnect on lose the connection) bool false
 beamer.irc_automatic_reconnect_max (Max. tries to connect) int 5
 beamer.irc_user_password (Password for registered Users) string ""
 beamer.irc_server_step (Check message every ) float 2
-beamer.key_network (Public Encryption-Key) int 64
+beamer.key_network (Public Encryption-Key) int 12345

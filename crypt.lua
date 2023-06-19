@@ -1,52 +1,68 @@
 local b = beamer
-local key_network = b.key_network
+local floor = math.floor
+
+local function xor (a,b)
+  local r = 0
+  for i = 0, 31 do
+    local x = a / 2 + b / 2
+
+    if x ~= floor (x) then
+      r = r + 2^i
+    end
+
+    a = floor (a / 2)
+    b = floor (b / 2)
+  end
+
+  return r
+
+end
 
 function b.lib.encrypt(phrase, public_key)
     local private_key = os.time() % 256
-    local crypted_pass_one = ""
-    local crypted_pass_two = ""
-    local char = ""
+    local encrypted_pass_one = ""
+    local encrypted_pass_two = ""
+    local chr = ""
     local string_len = string.len(phrase)
 
     for idx = string_len, 1, -1 do
-        char = string.byte(phrase,idx) ~ private_key
-        crypted_pass_one = crypted_pass_one .. string.char(char)
+        chr = xor(string.byte(phrase,idx), private_key)
+        encrypted_pass_one = encrypted_pass_one .. string.char(chr)
 
     end
 
-    crypted_pass_one = crypted_pass_one .. string.char(private_key)
+    encrypted_pass_one = encrypted_pass_one .. string.char(private_key)
 
     for idx = 1, string_len + 1 do
-        char = string.byte(crypted_pass_one,idx) ~ public_key
-        crypted_pass_two = crypted_pass_two .. string.char(char)
+        chr = xor(string.byte(encrypted_pass_one,idx), public_key)
+        encrypted_pass_two = encrypted_pass_two .. string.char(chr)
 
     end
 
-    return crypted_pass_two
+    return encrypted_pass_two
 
 end
 
 function b.lib.decrypt(phrase, public_key)
-    local crypted_pass_one = ""
-    local crypted_pass_two = ""
-    local char = ""
+    local decrypted_pass_one = ""
+    local decrypted_pass_two = ""
+    local chr = ""
     local string_len = string.len(phrase)
 
     for idx = 1, string_len do
-        char = string.byte(phrase,idx) ~ public_key
-        crypted_pass_two = crypted_pass_two .. string.char(char)
+        chr = xor(string.byte(phrase,idx), public_key)
+        decrypted_pass_two = decrypted_pass_two .. string.char(chr)
 
     end
 
-    private_key = string.byte(crypted_pass_two, string.len(crypted_pass_two))
+    local private_key = string.byte(decrypted_pass_two, string.len(decrypted_pass_two))
 
     for idx = string_len - 1, 1, -1 do
-        char = string.byte(crypted_pass_two,idx) ~ private_key
-        crypted_pass_one = crypted_pass_one .. string.char(char)
+        chr = xor(string.byte(decrypted_pass_two,idx), private_key)
+        decrypted_pass_one = decrypted_pass_one .. string.char(chr)
 
     end
 
-    crypted_pass_one = crypted_pass_one
-    return crypted_pass_one
+    return decrypted_pass_one
 
 end
