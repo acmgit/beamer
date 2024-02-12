@@ -4,7 +4,7 @@ beamer.servername (Name of the World) string Local
 beamer.use_16x16 (Size of the Animation) bool false
 
 # irc
-beamer.irc_use_encryption (Crypt/Decrypt beaming) or false
+beamer.irc_use_encryption (Crypt/Decrypt beaming) bool false
 beamer.irc_server_name (IP of the IRC) string "libera.chat"
 beamer.irc_server_port (Port of the IRC) int 6667
 beamer.irc_channel_name (Channel on the IRC) string ##MT_Local_Data
