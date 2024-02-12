@@ -71,7 +71,11 @@ end -- send(package)
 
 function b.lib.send_irc(package)
     local message = minetest.serialize(package)
-    message = b.lib.encrypt(message, key_network)
+    if(b.use_encryption) then
+        message = b.lib.encrypt(message, key_network)
+
+    end
+
     message = "PRIVMSG "   .. b.irc_channel_name .. " :" .. message .. b.crlf
     b.client:send(message)
 

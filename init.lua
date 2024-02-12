@@ -37,6 +37,7 @@ b.formspec_fields["receiver"] = ""
 b.formspec_fields["amount"] = 1
 b.key_network = tonumber(minetest.settings:get("beamer.key_network")) or 12345
 b.key_network = b.key_network % 256
+b.use_encryption = minetest.settings:get("beamer.irc_use_encryption") or false
 
 if(minetest.get_translator ~= nil) then
     b.S = minetest.get_translator(beamer.modname)

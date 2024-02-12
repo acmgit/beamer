@@ -89,7 +89,10 @@ if(b.irc) then
         _, e = string.find(line, "PRIVMSG " .. b.irc_channel_name .. " :")
         e = e or 0
         local pkg = string.sub(line, e + 1, string.len(line))
-        pkg = b.lib.decrypt(pkg, key_network)
+        if(b.use_encryption) then
+            pkg = b.lib.decrypt(pkg, key_network)
+
+        end
         local package = minetest.deserialize(pkg)
         if(package) then
             b.lib.receive(package)
