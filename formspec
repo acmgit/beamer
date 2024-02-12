@@ -1,0 +1,10 @@
+"formspec_version[6]" ..
+"size[13,5]" ..
+"textlist[0.2,0.6;4.8,2.8;serverlist;;1;false]" ..
+"field[5.1,1.9;7.4,0.8;itemstring;Item;default:cobble]" ..
+"field[5.1,3.2;3,0.8;amount;Amount;1]" ..
+"field[5.1,0.6;7.3,0.8;receiver;Name;]" ..
+"label[0.2,0.3;Server]" ..
+"image[8.4,3;1,1;]" ..
+"button_exit[9.7,4;3,0.8;btn_exit;Exit]" ..
+"button[0.2,4;3,0.8;btn_chancel;Chancel]"

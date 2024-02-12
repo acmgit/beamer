@@ -115,12 +115,22 @@ dofile(b.path .. "/irc.lua")
 
 -- ***************************************** Main ****************************************
 
+local texturesize = 32
+if(b.use_16x16) then
+    texturesize = 16
+
+end
+
+
 minetest.register_node("beamer:beamer", {
         description = S("Beamer"),
         paramtype2 = "facedir",
         drawtype = "nodebox",
         -- top, bottom, right, left, back, front
-        tiles = {   "beamer_beamer_top.png",
+        tiles = {   {
+                     name = "beamer_beamer_top.png",
+                     animation={type="vertical_frames", aspect_w=texturesize, aspect_h=texturesize, length=2}
+                    },
                     "beamer_beamer_bottom.png",
                     "beamer_beamer_side_right.png",
                     "beamer_beamer_side_left.png",
