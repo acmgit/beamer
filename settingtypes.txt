@@ -1,6 +1,7 @@
 # init
 beamer.irc (Local or Global) bool false
 beamer.servername (Name of the World) string Local
+beamer.use_16x16 (Size of the Animation) bool false
 
 # irc
 beamer.irc_server_name (IP of the IRC) string "libera.chat"
